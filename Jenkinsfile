@@ -2,12 +2,12 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_USER = 'kapilanramesh'
-        DOCKERHUB_PASS = 'Kapilan@2003'
+        DOCKERHUB_PASS = 'your-dockerhub-password'
     }
     stages {
         stage('Clone Source Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/<your-username>/<your-repo>.git'
+                git branch: 'main', url: 'https://github.com/kapilanramesh/crud-dd-task-mean-app'
             }
         }
         stage('Build Images') {
@@ -19,10 +19,10 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh 'docker tag backend:latest $USER/backend:latest'
-                    sh 'docker tag frontend:latest $USER/frontend:latest'
-                    sh 'docker push $USER/backend:latest'
-                    sh 'docker push $USER/frontend:latest'
+                    sh 'docker tag kapilanramesh/my-backend $USER/my-backend'
+                    sh 'docker tag kapilanramesh/my-frontend $USER/my-frontend'
+                    sh 'docker push $USER/my-backend'
+                    sh 'docker push $USER/my-frontend'
                 }
             }
         }
