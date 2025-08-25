@@ -1,0 +1,455 @@
+Started by user user
+Obtained Jenkinsfile from git https://github.com/kapilanramesh/crud-dd-task-mean-app
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/crud-dd-app
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-cred
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/crud-dd-app/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/kapilanramesh/crud-dd-task-mean-app # timeout=10
+Fetching upstream changes from https://github.com/kapilanramesh/crud-dd-task-mean-app
+ > git --version # timeout=10
+ > git --version # 'git version 2.34.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/kapilanramesh/crud-dd-task-mean-app +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision c434a00ca125e97c422e8ea4ad84a7075498907e (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c434a00ca125e97c422e8ea4ad84a7075498907e # timeout=10
+Commit message: " Jenkinsfile"
+ > git rev-list --no-walk b0b5acfbf7b527b1c8a9c38f71602617182cf9c5 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Clone Source Code)
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github-cred
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/crud-dd-app/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/kapilanramesh/crud-dd-task-mean-app # timeout=10
+Fetching upstream changes from https://github.com/kapilanramesh/crud-dd-task-mean-app
+ > git --version # timeout=10
+ > git --version # 'git version 2.34.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/kapilanramesh/crud-dd-task-mean-app +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision c434a00ca125e97c422e8ea4ad84a7075498907e (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c434a00ca125e97c422e8ea4ad84a7075498907e # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main c434a00ca125e97c422e8ea4ad84a7075498907e # timeout=10
+Commit message: " Jenkinsfile"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Images)
+[Pipeline] sh
++ docker build -t kapilanramesh/my-backend ./backend
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   16.9kB
+Step 1/7 : FROM node:18-alpine
+ ---> ee77c6cd7c18
+Step 2/7 : WORKDIR /app
+ ---> Using cache
+ ---> b1345b02fa71
+Step 3/7 : COPY package*.json ./
+ ---> Using cache
+ ---> ffd4f8004636
+Step 4/7 : RUN npm install
+ ---> Using cache
+ ---> 892cc8b7354f
+Step 5/7 : COPY . .
+ ---> Using cache
+ ---> c958bf0af581
+Step 6/7 : EXPOSE 8080
+ ---> Using cache
+ ---> 84463bc2d284
+Step 7/7 : CMD ["node", "server.js"]
+ ---> Using cache
+ ---> b1de7658eb72
+Successfully built b1de7658eb72
+Successfully tagged kapilanramesh/my-backend:latest
+[Pipeline] sh
++ docker build -t kapilanramesh/my-frontend ./frontend
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  391.7kB
+Step 1/10 : FROM node:18-alpine as build
+ ---> ee77c6cd7c18
+Step 2/10 : WORKDIR /app
+ ---> Using cache
+ ---> b1345b02fa71
+Step 3/10 : COPY package*.json ./
+ ---> Using cache
+ ---> 8639933a191e
+Step 4/10 : RUN npm install
+ ---> Using cache
+ ---> 136da477e102
+Step 5/10 : COPY . .
+ ---> Using cache
+ ---> 8f3be90a4a15
+Step 6/10 : RUN npm run build --prod
+ ---> Using cache
+ ---> f759d3e33d87
+Step 7/10 : FROM nginx:alpine
+ ---> 4a86014ec699
+Step 8/10 : COPY --from=build /app/dist/angular-15-crud /usr/share/nginx/html
+ ---> Using cache
+ ---> 101a2c7bc8d2
+Step 9/10 : EXPOSE 80
+ ---> Using cache
+ ---> 16c6a693d8e9
+Step 10/10 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> c4bda9ed8e1b
+Successfully built c4bda9ed8e1b
+Successfully tagged kapilanramesh/my-frontend:latest
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to DockerHub)
+[Pipeline] withCredentials
+Masking supported pattern matches of $PASS
+[Pipeline] {
+[Pipeline] sh
++ docker login -u kapilanramesh --password-stdin
++ echo ****
+WARNING! Your password will be stored unencrypted in /var/lib/jenkins/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credential-stores
+
+Login Succeeded
+[Pipeline] sh
++ docker push kapilanramesh/my-backend
+Using default tag: latest
+The push refers to repository [docker.io/kapilanramesh/my-backend]
+09a889c39e6b: Preparing
+4173ce1c421c: Preparing
+c59808bab70d: Preparing
+2f2039ef57cb: Preparing
+82140d9a70a7: Preparing
+f3b40b0cdb1c: Preparing
+0b1f26057bd0: Preparing
+08000c18d16d: Preparing
+f3b40b0cdb1c: Waiting
+0b1f26057bd0: Waiting
+08000c18d16d: Waiting
+82140d9a70a7: Layer already exists
+f3b40b0cdb1c: Layer already exists
+0b1f26057bd0: Layer already exists
+08000c18d16d: Layer already exists
+2f2039ef57cb: Pushed
+09a889c39e6b: Pushed
+c59808bab70d: Pushed
+4173ce1c421c: Pushed
+latest: digest: sha256:65b663f8a907fad7d9b169a176cca50f32be3f6550f37557cc8f510d96b7c43b size: 1991
+[Pipeline] sh
++ docker push kapilanramesh/my-frontend
+Using default tag: latest
+The push refers to repository [docker.io/kapilanramesh/my-frontend]
+a10f37f25ff8: Preparing
+f9985d3fc94d: Preparing
+d208138be39d: Preparing
+a2b76470e8f1: Preparing
+917b2c97271e: Preparing
+16ca725632e5: Preparing
+7978a9c91f72: Preparing
+b6ff0212304e: Preparing
+418dccb7d85a: Preparing
+16ca725632e5: Waiting
+7978a9c91f72: Waiting
+b6ff0212304e: Waiting
+418dccb7d85a: Waiting
+917b2c97271e: Layer already exists
+d208138be39d: Layer already exists
+f9985d3fc94d: Layer already exists
+a2b76470e8f1: Layer already exists
+16ca725632e5: Layer already exists
+7978a9c91f72: Layer already exists
+418dccb7d85a: Layer already exists
+b6ff0212304e: Layer already exists
+a10f37f25ff8: Pushed
+latest: digest: sha256:a1decd1786626b932aa76154f630ababe53f99513a53b8ef4ebc35d3f1149dba size: 2199
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy on EC2)
+[Pipeline] sh
++ docker-compose down
+time="2025-08-25T06:23:45Z" level=warning msg="/var/lib/jenkins/workspace/crud-dd-app/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+[Pipeline] sh
++ docker-compose up -d
+time="2025-08-25T06:23:45Z" level=warning msg="/var/lib/jenkins/workspace/crud-dd-app/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ mongo Pulling 
+ b71466b94f26 Pulling fs layer 
+ cb5873cd7a26 Pulling fs layer 
+ 3419d9690417 Pulling fs layer 
+ e42dc4f47d52 Pulling fs layer 
+ 9456a0c857af Pulling fs layer 
+ aa87afe3fd4a Pulling fs layer 
+ 790ca8975216 Pulling fs layer 
+ 03fa8d8d1d95 Pulling fs layer 
+ 790ca8975216 Waiting 
+ e42dc4f47d52 Waiting 
+ 9456a0c857af Waiting 
+ aa87afe3fd4a Waiting 
+ 03fa8d8d1d95 Waiting 
+ 3419d9690417 Downloading [>                                                  ]  16.43kB/1.509MB
+ 3419d9690417 Verifying Checksum 
+ 3419d9690417 Download complete 
+ cb5873cd7a26 Downloading [===========================================>       ]  1.049kB/1.216kB
+ cb5873cd7a26 Downloading [==================================================>]  1.216kB/1.216kB
+ cb5873cd7a26 Verifying Checksum 
+ cb5873cd7a26 Download complete 
+ b71466b94f26 Downloading [>                                                  ]  307.2kB/29.72MB
+ b71466b94f26 Downloading [=============>                                     ]  7.975MB/29.72MB
+ b71466b94f26 Downloading [=======================>                           ]   13.8MB/29.72MB
+ b71466b94f26 Downloading [====================================>              ]  21.79MB/29.72MB
+ b71466b94f26 Downloading [==============================================>    ]  27.93MB/29.72MB
+ b71466b94f26 Verifying Checksum 
+ b71466b94f26 Download complete 
+ b71466b94f26 Extracting [>                                                  ]  327.7kB/29.72MB
+ b71466b94f26 Extracting [=====>                                             ]  3.277MB/29.72MB
+ b71466b94f26 Extracting [=========>                                         ]  5.898MB/29.72MB
+ b71466b94f26 Extracting [=============>                                     ]  8.192MB/29.72MB
+ b71466b94f26 Extracting [=================>                                 ]  10.16MB/29.72MB
+ e42dc4f47d52 Downloading [>                                                  ]  12.42kB/1.131MB
+ 9456a0c857af Downloading [==================================================>]     116B/116B
+ 9456a0c857af Verifying Checksum 
+ 9456a0c857af Download complete 
+ e42dc4f47d52 Verifying Checksum 
+ e42dc4f47d52 Download complete 
+ b71466b94f26 Extracting [=======================>                           ]  13.76MB/29.72MB
+ b71466b94f26 Extracting [==============================>                    ]  18.02MB/29.72MB
+ b71466b94f26 Extracting [====================================>              ]  21.95MB/29.72MB
+ b71466b94f26 Extracting [==========================================>        ]  25.23MB/29.72MB
+ aa87afe3fd4a Downloading [==================================================>]     263B/263B
+ aa87afe3fd4a Verifying Checksum 
+ aa87afe3fd4a Download complete 
+ b71466b94f26 Extracting [==========================================>        ]  25.56MB/29.72MB
+ b71466b94f26 Extracting [==============================================>    ]  27.85MB/29.72MB
+ b71466b94f26 Extracting [=================================================> ]  29.16MB/29.72MB
+ b71466b94f26 Extracting [=================================================> ]  29.49MB/29.72MB
+ 03fa8d8d1d95 Downloading [==========>                                        ]  1.049kB/5.003kB
+ 03fa8d8d1d95 Downloading [==================================================>]  5.003kB/5.003kB
+ 03fa8d8d1d95 Verifying Checksum 
+ 03fa8d8d1d95 Download complete 
+ 790ca8975216 Downloading [>                                                  ]  536.6kB/266.2MB
+ b71466b94f26 Extracting [==================================================>]  29.72MB/29.72MB
+ 790ca8975216 Downloading [>                                                  ]  3.211MB/266.2MB
+ b71466b94f26 Pull complete 
+ cb5873cd7a26 Extracting [==================================================>]  1.216kB/1.216kB
+ cb5873cd7a26 Extracting [==================================================>]  1.216kB/1.216kB
+ 790ca8975216 Downloading [=>                                                 ]  6.439MB/266.2MB
+ cb5873cd7a26 Pull complete 
+ 3419d9690417 Extracting [=>                                                 ]  32.77kB/1.509MB
+ 790ca8975216 Downloading [=>                                                 ]  8.057MB/266.2MB
+ 3419d9690417 Extracting [===========================================>       ]  1.311MB/1.509MB
+ 3419d9690417 Extracting [==================================================>]  1.509MB/1.509MB
+ 3419d9690417 Pull complete 
+ e42dc4f47d52 Extracting [=>                                                 ]  32.77kB/1.131MB
+ 790ca8975216 Downloading [=>                                                 ]  10.21MB/266.2MB
+ e42dc4f47d52 Extracting [==================================================>]  1.131MB/1.131MB
+ e42dc4f47d52 Extracting [==================================================>]  1.131MB/1.131MB
+ e42dc4f47d52 Pull complete 
+ 9456a0c857af Extracting [==================================================>]     116B/116B
+ 9456a0c857af Extracting [==================================================>]     116B/116B
+ 790ca8975216 Downloading [==>                                                ]  12.37MB/266.2MB
+ 9456a0c857af Pull complete 
+ aa87afe3fd4a Extracting [==================================================>]     263B/263B
+ aa87afe3fd4a Extracting [==================================================>]     263B/263B
+ aa87afe3fd4a Pull complete 
+ 790ca8975216 Downloading [==>                                                ]  15.06MB/266.2MB
+ 790ca8975216 Downloading [===>                                               ]  17.22MB/266.2MB
+ 790ca8975216 Downloading [===>                                               ]  19.38MB/266.2MB
+ 790ca8975216 Downloading [====>                                              ]  22.63MB/266.2MB
+ 790ca8975216 Downloading [====>                                              ]  25.82MB/266.2MB
+ 790ca8975216 Downloading [=====>                                             ]  29.03MB/266.2MB
+ 790ca8975216 Downloading [=====>                                             ]  31.72MB/266.2MB
+ 790ca8975216 Downloading [======>                                            ]  34.41MB/266.2MB
+ 790ca8975216 Downloading [=======>                                           ]  37.62MB/266.2MB
+ 790ca8975216 Downloading [=======>                                           ]   41.4MB/266.2MB
+ 790ca8975216 Downloading [========>                                          ]  43.57MB/266.2MB
+ 790ca8975216 Downloading [========>                                          ]  46.27MB/266.2MB
+ 790ca8975216 Downloading [========>                                          ]  47.88MB/266.2MB
+ 790ca8975216 Downloading [=========>                                         ]  50.02MB/266.2MB
+ 790ca8975216 Downloading [=========>                                         ]  52.18MB/266.2MB
+ 790ca8975216 Downloading [==========>                                        ]  54.87MB/266.2MB
+ 790ca8975216 Downloading [===========>                                       ]  58.61MB/266.2MB
+ 790ca8975216 Downloading [===========>                                       ]  61.82MB/266.2MB
+ 790ca8975216 Downloading [============>                                      ]  64.48MB/266.2MB
+ 790ca8975216 Downloading [============>                                      ]  67.68MB/266.2MB
+ 790ca8975216 Downloading [=============>                                     ]  71.43MB/266.2MB
+ 790ca8975216 Downloading [==============>                                    ]  75.17MB/266.2MB
+ 790ca8975216 Downloading [==============>                                    ]  78.38MB/266.2MB
+ 790ca8975216 Downloading [===============>                                   ]  82.12MB/266.2MB
+ 790ca8975216 Downloading [===============>                                   ]  84.27MB/266.2MB
+ 790ca8975216 Downloading [================>                                  ]  89.08MB/266.2MB
+ 790ca8975216 Downloading [=================>                                 ]  94.43MB/266.2MB
+ 790ca8975216 Downloading [==================>                                ]  98.69MB/266.2MB
+ 790ca8975216 Downloading [===================>                               ]  101.9MB/266.2MB
+ 790ca8975216 Downloading [===================>                               ]  105.1MB/266.2MB
+ 790ca8975216 Downloading [====================>                              ]  109.4MB/266.2MB
+ 790ca8975216 Downloading [=====================>                             ]  113.2MB/266.2MB
+ 790ca8975216 Downloading [=====================>                             ]  116.9MB/266.2MB
+ 790ca8975216 Downloading [======================>                            ]  119.6MB/266.2MB
+ 790ca8975216 Downloading [=======================>                           ]  124.4MB/266.2MB
+ 790ca8975216 Downloading [=======================>                           ]  127.6MB/266.2MB
+ 790ca8975216 Downloading [========================>                          ]  130.3MB/266.2MB
+ 790ca8975216 Downloading [=========================>                         ]  135.1MB/266.2MB
+ 790ca8975216 Downloading [==========================>                        ]  138.9MB/266.2MB
+ 790ca8975216 Downloading [==========================>                        ]  142.6MB/266.2MB
+ 790ca8975216 Downloading [===========================>                       ]    147MB/266.2MB
+ 790ca8975216 Downloading [===========================>                       ]  149.1MB/266.2MB
+ 790ca8975216 Downloading [============================>                      ]  153.9MB/266.2MB
+ 790ca8975216 Downloading [=============================>                     ]  158.8MB/266.2MB
+ 790ca8975216 Downloading [==============================>                    ]  164.7MB/266.2MB
+ 790ca8975216 Downloading [================================>                  ]  172.1MB/266.2MB
+ 790ca8975216 Downloading [=================================>                 ]  178.6MB/266.2MB
+ 790ca8975216 Downloading [==================================>                ]  182.9MB/266.2MB
+ 790ca8975216 Downloading [===================================>               ]  189.3MB/266.2MB
+ 790ca8975216 Downloading [====================================>              ]    193MB/266.2MB
+ 790ca8975216 Downloading [=====================================>             ]  197.3MB/266.2MB
+ 790ca8975216 Downloading [======================================>            ]  203.7MB/266.2MB
+ 790ca8975216 Downloading [======================================>            ]  206.4MB/266.2MB
+ 790ca8975216 Downloading [=======================================>           ]  210.1MB/266.2MB
+ 790ca8975216 Downloading [=======================================>           ]  212.8MB/266.2MB
+ 790ca8975216 Downloading [========================================>          ]  217.6MB/266.2MB
+ 790ca8975216 Downloading [=========================================>         ]    223MB/266.2MB
+ 790ca8975216 Downloading [==========================================>        ]  227.3MB/266.2MB
+ 790ca8975216 Downloading [===========================================>       ]  231.5MB/266.2MB
+ 790ca8975216 Downloading [============================================>      ]  235.3MB/266.2MB
+ 790ca8975216 Downloading [============================================>      ]  239.6MB/266.2MB
+ 790ca8975216 Downloading [=============================================>     ]  243.8MB/266.2MB
+ 790ca8975216 Downloading [==============================================>    ]  248.1MB/266.2MB
+ 790ca8975216 Downloading [==============================================>    ]  249.7MB/266.2MB
+ 790ca8975216 Downloading [===============================================>   ]  252.4MB/266.2MB
+ 790ca8975216 Downloading [================================================>  ]  259.3MB/266.2MB
+ 790ca8975216 Verifying Checksum 
+ 790ca8975216 Download complete 
+ 790ca8975216 Extracting [>                                                  ]  557.1kB/266.2MB
+ 790ca8975216 Extracting [=>                                                 ]  6.128MB/266.2MB
+ 790ca8975216 Extracting [=>                                                 ]   9.47MB/266.2MB
+ 790ca8975216 Extracting [=>                                                 ]  10.03MB/266.2MB
+ 790ca8975216 Extracting [=>                                                 ]  10.58MB/266.2MB
+ 790ca8975216 Extracting [==>                                                ]  12.81MB/266.2MB
+ 790ca8975216 Extracting [===>                                               ]  17.83MB/266.2MB
+ 790ca8975216 Extracting [====>                                              ]  22.28MB/266.2MB
+ 790ca8975216 Extracting [=====>                                             ]  26.74MB/266.2MB
+ 790ca8975216 Extracting [=====>                                             ]   31.2MB/266.2MB
+ 790ca8975216 Extracting [======>                                            ]  35.65MB/266.2MB
+ 790ca8975216 Extracting [=======>                                           ]  40.11MB/266.2MB
+ 790ca8975216 Extracting [========>                                          ]  44.01MB/266.2MB
+ 790ca8975216 Extracting [========>                                          ]  47.91MB/266.2MB
+ 790ca8975216 Extracting [=========>                                         ]  52.36MB/266.2MB
+ 790ca8975216 Extracting [==========>                                        ]  56.26MB/266.2MB
+ 790ca8975216 Extracting [===========>                                       ]  60.16MB/266.2MB
+ 790ca8975216 Extracting [===========>                                       ]  62.95MB/266.2MB
+ 790ca8975216 Extracting [============>                                      ]  64.62MB/266.2MB
+ 790ca8975216 Extracting [============>                                      ]  65.73MB/266.2MB
+ 790ca8975216 Extracting [============>                                      ]  66.85MB/266.2MB
+ 790ca8975216 Extracting [=============>                                     ]  70.75MB/266.2MB
+ 790ca8975216 Extracting [==============>                                    ]  76.32MB/266.2MB
+ 790ca8975216 Extracting [===============>                                   ]  80.22MB/266.2MB
+ 790ca8975216 Extracting [================>                                  ]  85.79MB/266.2MB
+ 790ca8975216 Extracting [================>                                  ]  90.24MB/266.2MB
+ 790ca8975216 Extracting [==================>                                ]  96.37MB/266.2MB
+ 790ca8975216 Extracting [===================>                               ]  101.4MB/266.2MB
+ 790ca8975216 Extracting [===================>                               ]  106.4MB/266.2MB
+ 790ca8975216 Extracting [=====================>                             ]  112.5MB/266.2MB
+ 790ca8975216 Extracting [=====================>                             ]  115.9MB/266.2MB
+ 790ca8975216 Extracting [=====================>                             ]  116.4MB/266.2MB
+ 790ca8975216 Extracting [======================>                            ]  118.7MB/266.2MB
+ 790ca8975216 Extracting [=======================>                           ]  124.2MB/266.2MB
+ 790ca8975216 Extracting [========================>                          ]  128.7MB/266.2MB
+ 790ca8975216 Extracting [========================>                          ]  132.6MB/266.2MB
+ 790ca8975216 Extracting [=========================>                         ]    137MB/266.2MB
+ 790ca8975216 Extracting [==========================>                        ]  140.9MB/266.2MB
+ 790ca8975216 Extracting [===========================>                       ]  145.4MB/266.2MB
+ 790ca8975216 Extracting [============================>                      ]  150.4MB/266.2MB
+ 790ca8975216 Extracting [============================>                      ]  154.3MB/266.2MB
+ 790ca8975216 Extracting [=============================>                     ]    156MB/266.2MB
+ 790ca8975216 Extracting [=============================>                     ]  157.1MB/266.2MB
+ 790ca8975216 Extracting [=============================>                     ]  158.2MB/266.2MB
+ 790ca8975216 Extracting [==============================>                    ]  161.5MB/266.2MB
+ 790ca8975216 Extracting [===============================>                   ]  165.4MB/266.2MB
+ 790ca8975216 Extracting [================================>                  ]  170.5MB/266.2MB
+ 790ca8975216 Extracting [================================>                  ]  174.4MB/266.2MB
+ 790ca8975216 Extracting [=================================>                 ]  176.6MB/266.2MB
+ 790ca8975216 Extracting [=================================>                 ]  179.9MB/266.2MB
+ 790ca8975216 Extracting [==================================>                ]  182.7MB/266.2MB
+ 790ca8975216 Extracting [==================================>                ]  185.5MB/266.2MB
+ 790ca8975216 Extracting [===================================>               ]  187.2MB/266.2MB
+ 790ca8975216 Extracting [===================================>               ]  191.1MB/266.2MB
+ 790ca8975216 Extracting [====================================>              ]    195MB/266.2MB
+ 790ca8975216 Extracting [=====================================>             ]  199.4MB/266.2MB
+ 790ca8975216 Extracting [======================================>            ]  202.8MB/266.2MB
+ 790ca8975216 Extracting [======================================>            ]  207.2MB/266.2MB
+ 790ca8975216 Extracting [=======================================>           ]  209.5MB/266.2MB
+ 790ca8975216 Extracting [=======================================>           ]  212.2MB/266.2MB
+ 790ca8975216 Extracting [========================================>          ]  216.1MB/266.2MB
+ 790ca8975216 Extracting [=========================================>         ]  222.8MB/266.2MB
+ 790ca8975216 Extracting [==========================================>        ]    229MB/266.2MB
+ 790ca8975216 Extracting [===========================================>       ]    234MB/266.2MB
+ 790ca8975216 Extracting [============================================>      ]  237.3MB/266.2MB
+ 790ca8975216 Extracting [=============================================>     ]  241.8MB/266.2MB
+ 790ca8975216 Extracting [==============================================>    ]  245.7MB/266.2MB
+ 790ca8975216 Extracting [==============================================>    ]  250.1MB/266.2MB
+ 790ca8975216 Extracting [===============================================>   ]    254MB/266.2MB
+ 790ca8975216 Extracting [================================================>  ]  257.9MB/266.2MB
+ 790ca8975216 Extracting [================================================>  ]  260.7MB/266.2MB
+ 790ca8975216 Extracting [=================================================> ]  261.8MB/266.2MB
+ 790ca8975216 Extracting [=================================================> ]  262.4MB/266.2MB
+ 790ca8975216 Extracting [=================================================> ]  264.6MB/266.2MB
+ 790ca8975216 Extracting [==================================================>]  266.2MB/266.2MB
+ 790ca8975216 Pull complete 
+ 03fa8d8d1d95 Extracting [==================================================>]  5.003kB/5.003kB
+ 03fa8d8d1d95 Extracting [==================================================>]  5.003kB/5.003kB
+ 03fa8d8d1d95 Pull complete 
+ mongo Pulled 
+ Network crud-dd-app_default  Creating
+ Network crud-dd-app_default  Created
+ Volume "crud-dd-app_mongo-data"  Creating
+ Volume "crud-dd-app_mongo-data"  Created
+ Container mongo  Creating
+ Container mongo  Created
+ Container backend  Creating
+ Container backend  Created
+ Container frontend  Creating
+ Container frontend  Created
+ Container mongo  Starting
+ Container mongo  Started
+ Container backend  Starting
+ Container backend  Started
+ Container frontend  Starting
+ Container frontend  Started
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
