@@ -7,7 +7,9 @@ pipeline {
     stages {
         stage('Clone Source Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/kapilanramesh/crud-dd-task-mean-app'
+                git branch: 'main', 
+                url: 'https://github.com/kapilanramesh/crud-dd-task-mean-app',
+                credentialsId: 'github-cred'
             }
         }
         stage('Build Images') {
