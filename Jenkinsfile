@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_USER = 'kapilanramesh'
-        DOCKERHUB_PASS = 'your-dockerhub-password'
+        DOCKERHUB_PASS = 'Kapilan@2003'
     }
     stages {
         stage('Clone Source Code') {
