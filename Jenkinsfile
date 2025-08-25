@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        DOCKERHUB_USER = 'kapilanramesh'
+    }
     stages {
         stage('Clone Source Code') {
             steps {
@@ -8,12 +11,14 @@ pipeline {
                     credentialsId: 'github-cred'
             }
         }
+
         stage('Build Images') {
             steps {
-                sh "docker build -t ${env.DOCKERHUB_USER}/my-backend ./backend"
-                sh "docker build -t ${env.DOCKERHUB_USER}/my-frontend ./frontend"
+                sh 'docker build -t $DOCKERHUB_USER/my-backend ./backend'
+                sh 'docker build -t $DOCKERHUB_USER/my-frontend ./frontend'
             }
         }
+
         stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
@@ -23,10 +28,10 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy on EC2') {
             steps {
                 sh 'docker-compose down || true'
-                sh 'docker-compose pull'
                 sh 'docker-compose up -d'
             }
         }
